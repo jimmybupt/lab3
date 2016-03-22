@@ -13,6 +13,6 @@ options.initialize_parser(parser)
 
 #train model
 
-#run model
+#test model
 
-#report model
+#evaluate model
