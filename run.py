@@ -59,7 +59,10 @@ for line in label_file:
 		block = cross_fold - 1
 	offset = i - block_size * block
 
-	L[block][offset] = ast.literal_eval(line)
+	label = ast.literal_eval(line)
+	#print label[0].encode('ascii')
+	L[block][offset] = str(label[0])
+	i = i+1
 	if i==rdim:
 		break
 
@@ -73,13 +76,25 @@ data_process_time= time.time()  - start_time
 
 #identify training set / test set
 
-Training_Data = vstack([T[0],T[1],T[2],T[3])
+Training_Data = vstack([T[0],T[1],T[2],T[3]])
 Training_Label = L[0] + L[1] + L[2] + L[3]
 Test_Data = T[4]
 Test_Label = L[4]
 
 #train model
+import classifier
+import numpy
+
+#print Training_Label
+#print numpy.array(Training_Label)
+Classifier , build_time = classifier.KNN_classifier(Training_Data.toarray(), numpy.array(Training_Label, dtype=str))
 
 #test model
+#Predict_Label = Classifier.predict(Test_Data.toarray())
+
+#print Predict_Label
 
 #evaluate model
+score = Classifier.score(Test_Data.toarray(), numpy.array(Test_Label, dtype=str))
+
+print score
