@@ -76,18 +76,25 @@ data_process_time= time.time()  - start_time
 
 #identify training set / test set
 
-Training_Data = vstack([T[0],T[1],T[2],T[3]])
-Training_Label = L[0] + L[1] + L[2] + L[3]
-Test_Data = T[4]
-Test_Label = L[4]
+for i in range (0, cross_fold):
+	Idx = range(0, cross_fold)
+	Idx.pop(i)
+	tmp = []
+	Training_Label = []
+	for j in Idx:
+		tmp.append(T[j])
+		Training_Label += L[j]
+	Training_Data = vstack(tmp)
+	Test_Data = T[i]
+	Test_Label = L[i]
 
 #train model
-import classifier
-import numpy
+	import classifier
+	import numpy
 
 #print Training_Label
 #print numpy.array(Training_Label)
-Classifier , build_time = classifier.KNN_classifier(Training_Data.toarray(), numpy.array(Training_Label, dtype=str))
+	Classifier , build_time = classifier.bayes_classifier(Training_Data.toarray(), numpy.array(Training_Label, dtype=str))
 
 #test model
 #Predict_Label = Classifier.predict(Test_Data.toarray())
@@ -95,6 +102,6 @@ Classifier , build_time = classifier.KNN_classifier(Training_Data.toarray(), num
 #print Predict_Label
 
 #evaluate model
-score = Classifier.score(Test_Data.toarray(), numpy.array(Test_Label, dtype=str))
+	score = Classifier.score(Test_Data.toarray(), numpy.array(Test_Label, dtype=str))
 
-print score
+	print score
