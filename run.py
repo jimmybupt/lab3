@@ -73,7 +73,10 @@ data_process_time= time.time()  - start_time
 
 #identify training set / test set
 
-
+Training_Data = vstack([T[0],T[1],T[2],T[3])
+Training_Label = L[0] + L[1] + L[2] + L[3]
+Test_Data = T[4]
+Test_Label = L[4]
 
 #train model
 
