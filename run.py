@@ -24,9 +24,9 @@ block_size = rdim / 5
 S = []	#vectors
 L = []	#labels
 
-for i = 1 to cross_fold
+for i in range(0, cross_fold):
 	size = block_size
-	if i == cross_fold:
+	if i == cross_fold - 1:
 		size = rdim - ((cross_fold-1)*block_size)
 	M = lil_matrix((size, cdim))
 	V = [None] * size;
@@ -40,21 +40,34 @@ print "Reading vectors... ",
 sys.stdout.flush()
 i = 0
 for line in vector_file:
+	block = i / block_size
+	if block >= cross_fold:
+		block = cross_fold - 1
+	offset = i - block_size * block
+
 	data = ast.literal_eval(line);
 	for D in data:
-		S[i, int(D[0])] = float(D[1])
+		S[block][offset, int(D[0])] = float(D[1])
 	i=i+1
 	if i==rdim:
 		break
-label = []
+
 i = 0
 for line in label_file:
-	label.append(ast.literal_eval(line))
+	block = i / block_size
+	if block >= cross_fold:
+		block = cross_fold - 1
+	offset = i - block_size * block
+
+	L[block][offset] = ast.literal_eval(line)
 	if i==rdim:
 		break
 
+T = []
+for M in S:
+	T.append(M.tocsr())	
+
 print "done"
-S = S.tocsr()
 
 data_process_time= time.time()  - start_time
 
