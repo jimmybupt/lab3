@@ -75,6 +75,9 @@ print "done"
 data_process_time= time.time()  - start_time
 
 #identify training set / test set
+import classifier
+import numpy
+from sklearn.metrics import precision_recall_fscore_support
 
 for i in range (0, cross_fold):
 	Idx = range(0, cross_fold)
@@ -88,20 +91,21 @@ for i in range (0, cross_fold):
 	Test_Data = T[i]
 	Test_Label = L[i]
 
-#train model
-	import classifier
-	import numpy
+    #naive bayes classification
+  	print ("cross validation trial:"+str(i+1)) 
+	gnb, time_gnb = classifier.bayes_classifier(Training_Data.toarray(), numpy.array(Training_Label, dtype=str))
+	score_gnb = gnb.score(Test_Data.toarray(), numpy.array(Test_Label, dtype=str))
+	print ("online time cost is:" + str(time_gnb))
+ 	print ("accuracy is:" +  str(score_gnb))
+  	print ("precision, recall, fscore and support are:") 
+  	print (precision_recall_fscore_support(numpy.array(Test_Label, dtype=str),gnb.predict(Test_Data.toarray()),average='macro'))
 
-#print Training_Label
-#print numpy.array(Training_Label)
-	Classifier , build_time = classifier.bayes_classifier(Training_Data.toarray(), numpy.array(Training_Label, dtype=str))
+	clf, time_clf = classifier.tree_classifier(Training_Data.toarray(), numpy.array(Training_Label, dtype=str))
+ 	score_clf = clf.score(Test_Data.toarray(), numpy.array(Test_Label, dtype=str))  
+	print ("online time cost is:" + str(time_clf))
+ 	print ("accuracy is:" +  str(score_clf))
+  	print ("precision, recall, fscore and support are:") 
+  	print (precision_recall_fscore_support(numpy.array(Test_Label, dtype=str),clf.predict(Test_Data.toarray()),average='macro'))
 
-#test model
-#Predict_Label = Classifier.predict(Test_Data.toarray())
 
-#print Predict_Label
-
-#evaluate model
-	score = Classifier.score(Test_Data.toarray(), numpy.array(Test_Label, dtype=str))
-
-	print score
+#plot
