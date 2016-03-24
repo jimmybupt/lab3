@@ -117,7 +117,7 @@ for i in range (0, cross_fold):
 	print ("  online time cost is: " + str(online_time_gnb/block_size))
  	print ("  accuracy is: " +  str(score_gnb))
   	print ("  precision, recall, fscore and support are: ")
-  	print (precision_recall_fscore_support(numpy.array(Test_Label, dtype=str),predict_gnb,average='macro'))
+  	print (precision_recall_fscore_support(numpy.array(Test_Label, dtype=str),predict_gnb,average='weighted'))
 
 	clf, offline_time_clf = classifier.tree_classifier(Training_Data.toarray(), numpy.array(Training_Label, dtype=str))
   	offline_timelist_clf.append(offline_time_clf)
@@ -134,7 +134,7 @@ for i in range (0, cross_fold):
 	print ("  online time cost is: " + str(online_time_clf/block_size))
  	print ("  accuracy is: " +  str(score_clf))
   	print ("  precision, recall, fscore and support are: ") 
-  	print (precision_recall_fscore_support(numpy.array(Test_Label, dtype=str),clf.predict(Test_Data.toarray()),average='macro'))
+  	print (precision_recall_fscore_support(numpy.array(Test_Label, dtype=str),clf.predict(Test_Data.toarray()),average='weighted'))
 
 #print average time cost and accuracy for training and testing 
 print ("") 
