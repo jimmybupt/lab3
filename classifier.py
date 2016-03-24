@@ -21,7 +21,7 @@ def KNN_classifier(training_data, class_labels):
     
 
 def tree_classifier(training_data, class_labels):
-    print "Classification using desicion tree"
+    print "Classification using decision tree"
     start_time = time.time()
     
     clf = DecisionTreeClassifier()
