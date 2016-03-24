@@ -79,6 +79,11 @@ import classifier
 import numpy
 from sklearn.metrics import precision_recall_fscore_support
 
+offline_timelist_gnb=[]
+online_timelist_gnb=[]
+offline_timelist_clf=[]
+online_timelist_clf=[]
+
 for i in range (0, cross_fold):
 	Idx = range(0, cross_fold)
 	Idx.pop(i)
@@ -92,20 +97,47 @@ for i in range (0, cross_fold):
 	Test_Label = L[i]
 
     #naive bayes classification
-  	print ("cross validation trial:"+str(i+1)) 
-	gnb, time_gnb = classifier.bayes_classifier(Training_Data.toarray(), numpy.array(Training_Label, dtype=str))
-	score_gnb = gnb.score(Test_Data.toarray(), numpy.array(Test_Label, dtype=str))
-	print ("offline time cost is:" + str(time_gnb))
- 	print ("accuracy is:" +  str(score_gnb))
-  	print ("precision, recall, fscore and support are:") 
-  	print (precision_recall_fscore_support(numpy.array(Test_Label, dtype=str),gnb.predict(Test_Data.toarray()),average='macro'))
+  	print ("") 
+  	print ("cross validation trial: "+str(i+1)) 
+   
+	gnb, offline_time_gnb = classifier.bayes_classifier(Training_Data.toarray(), numpy.array(Training_Label, dtype=str))
+	offline_timelist_gnb.append(offline_time_gnb)
+  	score_gnb = gnb.score(Test_Data.toarray(), numpy.array(Test_Label, dtype=str))   
 
-	clf, time_clf = classifier.tree_classifier(Training_Data.toarray(), numpy.array(Training_Label, dtype=str))
+	print ("  offline time cost is: " + str(offline_time_gnb))
+  
+ 	start_time=time.time()
+     	predict_gnb=gnb.predict(Test_Data.toarray())
+	online_time_gnb=time.time()-start_time
+	online_timelist_gnb.append(online_time_gnb)
+ 
+	print ("  online time cost is: " + str(online_time_gnb/block_size))
+ 	print ("  accuracy is: " +  str(score_gnb))
+  	print ("  precision, recall, fscore and support are: ")
+  	print (precision_recall_fscore_support(numpy.array(Test_Label, dtype=str),predict_gnb,average='macro'))
+
+	clf, offline_time_clf = classifier.tree_classifier(Training_Data.toarray(), numpy.array(Training_Label, dtype=str))
  	score_clf = clf.score(Test_Data.toarray(), numpy.array(Test_Label, dtype=str))  
-	print ("offline time cost is:" + str(time_clf))
- 	print ("accuracy is:" +  str(score_clf))
-  	print ("precision, recall, fscore and support are:") 
+  	offline_timelist_clf.append(offline_time_clf)
+   
+	print ("  offline time cost is: " + str(offline_time_clf))
+ 
+  	start_time=time.time()
+     	predict_clf=clf.predict(Test_Data.toarray())
+	online_time_clf=time.time()-start_time
+	online_timelist_clf.append(online_time_clf) 
+ 
+	print ("  online time cost is: " + str(online_time_clf/block_size))
+ 	print ("  accuracy is: " +  str(score_clf))
+  	print ("  precision, recall, fscore and support are: ") 
   	print (precision_recall_fscore_support(numpy.array(Test_Label, dtype=str),clf.predict(Test_Data.toarray()),average='macro'))
+
+#print average time cost for training and testing 
+print ("") 
+print ("average offline cost for Naive Bayes classification is: " +str(sum(offline_timelist_gnb)/cross_fold))
+print ("average online cost for Naive Bayes classification is: " +str(sum(online_timelist_gnb)/rdim))
+print ("average offline cost for decision tree classification is: " +str(sum(offline_timelist_clf)/cross_fold))
+print ("average online cost for decision tree classification is: " +str(sum(online_timelist_clf)/rdim))
 
 
 #plot
