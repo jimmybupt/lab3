@@ -1,26 +1,27 @@
 print 'CSE 5243 Prediction Analysis by Kun Liu & Zhe Dong'
 
 #program options
-from optparse import OptionParser
-import options
-parser = OptionParser()
-options.initialize_parser(parser)
-(options, args) = parser.parse_args()
+#from optparse import OptionParser
+#import options
+#parser = OptionParser()
+#options.initialize_parser(parser)
+#(options, args) = parser.parse_args()
 
 #load data file
 
-vector_file = open(options.in_file, 'r')
+vector_file = open('vector1.txt', 'r')
 label_file = open('label.txt', 'r')
 
 import ast
 import sys
+import time
 from scipy.sparse import *
 info = open("info.txt",'r');
 rdim = int(info.readline())
 cdim = int(info.readline())
 
-cross_fold = 5
-block_size = rdim / 5
+cross_fold = 5 #number of blocks for cross validation
+block_size = rdim / cross_fold
 S = []	#vectors
 L = []	#labels
 
@@ -33,8 +34,7 @@ for i in range(0, cross_fold):
 	S.append(M)
 	L.append(V)
 
-import time
-start_time = time.time()
+initial_time = time.time()
 
 print "Reading vectors... ",
 sys.stdout.flush()
@@ -72,7 +72,7 @@ for M in S:
 
 print "done"
 
-data_process_time= time.time()  - start_time
+#data_process_time= time.time()  - start_time
 
 #identify training set / test set
 import classifier
@@ -83,6 +83,8 @@ offline_timelist_gnb=[]
 online_timelist_gnb=[]
 offline_timelist_clf=[]
 online_timelist_clf=[]
+accuracy_gnb=[]
+accuracy_clf=[]
 
 for i in range (0, cross_fold):
 	Idx = range(0, cross_fold)
@@ -98,12 +100,13 @@ for i in range (0, cross_fold):
 
     #naive bayes classification
   	print ("") 
-  	print ("cross validation trial: "+str(i+1)) 
+  	print ("cross validation trial: "+str(i+1)+" out of "+str(cross_fold)) 
    
 	gnb, offline_time_gnb = classifier.bayes_classifier(Training_Data.toarray(), numpy.array(Training_Label, dtype=str))
 	offline_timelist_gnb.append(offline_time_gnb)
   	score_gnb = gnb.score(Test_Data.toarray(), numpy.array(Test_Label, dtype=str))   
-
+  	accuracy_gnb.append(score_gnb) 
+   
 	print ("  offline time cost is: " + str(offline_time_gnb))
   
  	start_time=time.time()
@@ -117,8 +120,9 @@ for i in range (0, cross_fold):
   	print (precision_recall_fscore_support(numpy.array(Test_Label, dtype=str),predict_gnb,average='macro'))
 
 	clf, offline_time_clf = classifier.tree_classifier(Training_Data.toarray(), numpy.array(Training_Label, dtype=str))
- 	score_clf = clf.score(Test_Data.toarray(), numpy.array(Test_Label, dtype=str))  
   	offline_timelist_clf.append(offline_time_clf)
+ 	score_clf = clf.score(Test_Data.toarray(), numpy.array(Test_Label, dtype=str))  
+  	accuracy_clf.append(score_clf) 
    
 	print ("  offline time cost is: " + str(offline_time_clf))
  
@@ -135,9 +139,9 @@ for i in range (0, cross_fold):
 #print average time cost for training and testing 
 print ("") 
 print ("average offline cost for Naive Bayes classification is: " +str(sum(offline_timelist_gnb)/cross_fold))
-print ("average online cost for Naive Bayes classification is: " +str(sum(online_timelist_gnb)/rdim))
 print ("average offline cost for decision tree classification is: " +str(sum(offline_timelist_clf)/cross_fold))
+print ("average online cost for Naive Bayes classification is: " +str(sum(online_timelist_gnb)/rdim))
 print ("average online cost for decision tree classification is: " +str(sum(online_timelist_clf)/rdim))
-
-
-#plot
+print ("average accuracy for Naive Bayes classification is: " +str(sum(accuracy_gnb)/cross_fold))
+print ("average accuracy for decision tree classification is: " +str(sum(accuracy_clf)/cross_fold))
+print ("total running time is : " +str(time.time()-initial_time))
