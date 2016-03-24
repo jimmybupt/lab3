@@ -136,7 +136,7 @@ for i in range (0, cross_fold):
   	print ("  precision, recall, fscore and support are: ") 
   	print (precision_recall_fscore_support(numpy.array(Test_Label, dtype=str),clf.predict(Test_Data.toarray()),average='macro'))
 
-#print average time cost for training and testing 
+#print average time cost and accuracy for training and testing 
 print ("") 
 print ("average offline cost for Naive Bayes classification is: " +str(sum(offline_timelist_gnb)/cross_fold))
 print ("average offline cost for decision tree classification is: " +str(sum(offline_timelist_clf)/cross_fold))
