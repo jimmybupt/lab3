@@ -11,6 +11,7 @@ import time
 
 #build classifer and fit training data
 def KNN_classifier(training_data, class_labels):
+    print ""
     print "Classification using KNN"
     start_time = time.time()
 
@@ -21,6 +22,7 @@ def KNN_classifier(training_data, class_labels):
     
 
 def tree_classifier(training_data, class_labels):
+    print ""
     print "Classification using decision tree"
     start_time = time.time()
     
@@ -31,6 +33,7 @@ def tree_classifier(training_data, class_labels):
     
     
 def bayes_classifier(training_data, class_labels):
+    print ""
     print "Classification using Gaussian Naive Bayes"
     start_time = time.time()
     
