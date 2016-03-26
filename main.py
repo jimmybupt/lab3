@@ -16,7 +16,7 @@ import ast
 import sys
 import time
 from scipy.sparse import *
-info = open("info.txt",'r');
+info = open("info.txt",'r') #stores the number of vectors and length of vectors
 rdim = int(info.readline())
 cdim = int(info.readline())
 
@@ -30,7 +30,7 @@ for i in range(0, cross_fold):
 	if i == cross_fold - 1:
 		size = rdim - ((cross_fold-1)*block_size)
 	M = lil_matrix((size, cdim))
-	V = [None] * size;
+	V = [None] * size
 	S.append(M)
 	L.append(V)
 
@@ -45,7 +45,7 @@ for line in vector_file:
 		block = cross_fold - 1
 	offset = i - block_size * block
 
-	data = ast.literal_eval(line);
+	data = ast.literal_eval(line)
 	for D in data:
 		S[block][offset, int(D[0])] = float(D[1])
 	i=i+1
